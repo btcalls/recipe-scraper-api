@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 recipe-scrapers = "*"
 ingredient-parser-nlp = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [dev-packages]
 

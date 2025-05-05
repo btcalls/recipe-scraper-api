@@ -10,4 +10,4 @@ app = FastAPI()
 async def parse_url(url: str = Body(..., embed=True)):
     recipe = parse_recipe(url)
 
-    return {"name": recipe.name}
+    return recipe.to_dict()

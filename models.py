@@ -28,6 +28,25 @@ class Recipe():
         Total time: {self.total_time} mins.
         """
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "category": self.category,
+            "cuisine": self.cuisine,
+            "description": self.description,
+            "prep_time": self.prep_time,
+            "total_time": self.total_time,
+            "instructions_list": self.instructions,
+            "instance_description": str(self),
+            "ingredients": [
+                {"name": ingredient.name,
+                 "amount": ingredient.amount,
+                 "method": ingredient.method,
+                 "instance_description": str(ingredient)}
+                for ingredient in self.ingredients
+            ]
+        }
+
 
 class Ingredient():
     def __init__(self, name):

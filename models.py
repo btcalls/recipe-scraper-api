@@ -47,6 +47,7 @@ class Recipe():
     def __init__(self, json):
         self.id = str(uuid4())
         self.name = cleanup_strip_text(json['title'])
+        self.image = json['image']
         self.category = cleanup_strip_text(json['category'])
         self.cuisine = cleanup_strip_text(json['cuisine'])
         self.description = cleanup_strip_text(json['description'], False)
@@ -80,12 +81,13 @@ class Recipe():
         return {
             "id": self.id,
             "name": self.name,
+            "image_url": self.image,
             "category": self.category,
             "cuisine": self.cuisine,
             "description": self.description,
             "prep_time": self.prep_time,
             "total_time": self.total_time,
-            "instructions_list": self.instructions,
+            "instructions": self.instructions,
             "instance_description": str(self),
             "ingredients": [
                 {"name": ingredient.name,

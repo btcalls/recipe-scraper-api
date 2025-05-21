@@ -89,31 +89,26 @@ class Recipe():
             "total_time": self.total_time,
             "instructions": self.instructions,
             "instance_description": str(self),
-            "ingredients": [
-                {"name": ingredient.name,
-                 "amount": ingredient.amount,
-                 "method": ingredient.method,
-                 "instance_description": str(ingredient)}
-                for ingredient in self.ingredients
-            ]
+            "ingredients": [item.to_dict() for item in self.ingredients]
         }
 
 
 class Ingredient():
     def __init__(self, name):
-        self._ingredient = parse_ingredient(name)
+        _ingredient = parse_ingredient(name)
 
-        self.name = cleanup_strip_text(self._ingredient.name[0].text, False)
+        self.id = str(uuid4())
+        self.name = cleanup_strip_text(_ingredient.name[0].text, False)
         self.amount = None
         self.method = None
 
-        if self._ingredient.amount is not None and len(self._ingredient.amount) > 0:
+        if _ingredient.amount is not None and len(_ingredient.amount) > 0:
             self.amount = cleanup_strip_text(
-                self._ingredient.amount[0].text, False)
+                _ingredient.amount[0].text, False)
 
-        if self._ingredient.preparation is not None:
+        if _ingredient.preparation is not None:
             self.method = cleanup_strip_text(
-                self._ingredient.preparation.text, False) \
+                _ingredient.preparation.text, False) \
                 .replace('(', '') \
                 .replace(')', '') \
 
@@ -127,3 +122,12 @@ class Ingredient():
             return f"{self.amount} {self.name}"
         else:
             return f"{self.amount} {self.name} ({self.method})"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "amount": self.amount,
+            "method": self.method,
+            "instance_description": str(self)
+        }

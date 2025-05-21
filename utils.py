@@ -26,16 +26,26 @@ def parse_recipe(url: str):
     Returns:
         Recipe: object containing key information. 
     """
-    recipe = None
-
     try:
-        # * Default scraper
         scraper = scrape_me(url)
-        recipe = Recipe(scraper.to_json())
+
+        return Recipe(scraper.to_json())
     except Exception as e:
         # * Handle unsupported websites
+        return parse_unsupported_recipe(url)
+
+
+def parse_unsupported_recipe(url: str):
+    """
+    Parses a recipe from a given unsupported URL.
+
+    Returns:
+        Recipe: object containing key information. 
+    """
+    try:
         html = fetch_html(url)
         scraper = scrape_html(html, url, supported_only=False)
-        recipe = Recipe(scraper.to_json())
 
-    return recipe
+        return Recipe(scraper.to_json())
+    except Exception as e:
+        return None

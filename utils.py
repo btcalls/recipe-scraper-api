@@ -1,51 +1,55 @@
+"""
+List of potentially parsed ingredient names that constitute to an invalid one.
 
-from recipe_scrapers import scrape_html, scrape_me
-from urllib.request import Request, urlopen
+Case 1: Recipe may specify how to serve the dish, and one of the options is to serve it plain, 
+hence keywords such as "Nothing", "None", "No", "N/A" are used (seen in https://www.recipetineats.com/crispy-oven-baked-quesadillas/).
 
-from models import Recipe
+List will be expanded as needed.
+"""
+erroneous_ingredients = ["Nothing", "None", "No", "N/A"]
+"""
+Words that are not needed in the recipe title or description.
+
+Case 1: Description pinpoints to a video within the recipe page (seen in https://www.recipetineats.com/crispy-oven-baked-quesadillas/).
+
+List will be expanded as needed.
+"""
+remove_words = ["Recipe video above."]
 
 
-def fetch_html(url: str):
+def cleanup_strip_text(text: str, is_title_case=True):
     """
-    Fetches the HTML content of a webpage. Typically used for `recipe_scrapers` unsupported websites.
+    Cleans up the text by removing unwanted characters and formatting.
 
     Returns:
-        str: decoded HTML content of the webpage.
+        str: cleaned text.
     """
-    request = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    response = urlopen(request)
-    data = response.read()
+    text = text \
+        .replace('\n', '') \
+        .replace('\r', '') \
+        .replace('/ ', '') \
+        .replace(' /', '') \
 
-    return data.decode('utf-8')
+    for word in remove_words:
+        text = text.replace(word, '')
+
+    text = text.strip()
+
+    return text.title() if is_title_case else text
 
 
-def parse_recipe(url: str):
+def cleanup_strip_title(text: str):
     """
-    Parses a recipe from a given URL.
+    Cleans up the title text by removing unwanted characters and formatting.
 
     Returns:
-        Recipe: object containing key information. 
+        str: cleaned title.
     """
-    try:
-        scraper = scrape_me(url)
+    unwanted_words = ['Recipe', 'Recipes', 'Recipe:', 'Recipes:']
+    cleaned = cleanup_strip_text(text, True)
 
-        return Recipe(scraper.to_json())
-    except Exception as e:
-        # * Handle unsupported websites
-        return parse_unsupported_recipe(url)
+    # Remove any unwanted words from the title (e.g. "Recipe")
+    for word in unwanted_words:
+        cleaned = cleaned.replace(word, '')
 
-
-def parse_unsupported_recipe(url: str):
-    """
-    Parses a recipe from a given unsupported URL.
-
-    Returns:
-        Recipe: object containing key information. 
-    """
-    try:
-        html = fetch_html(url)
-        scraper = scrape_html(html, url, supported_only=False)
-
-        return Recipe(scraper.to_json())
-    except Exception as e:
-        return None
+    return cleaned.strip()

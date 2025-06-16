@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Body, HTTPException
 
-from utils import parse_recipe
-
+from parsers import parse_recipe
 
 app = FastAPI()
 

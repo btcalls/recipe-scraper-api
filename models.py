@@ -10,8 +10,8 @@ class Recipe():
         self.id = str(uuid4())
         self.name = cleanup_strip_title(json['title'])
         self.image = json['image']
-        self.category = cleanup_strip_text(json['category'])
-        self.cuisine = cleanup_strip_text(json['cuisine'])
+        self.categories = cleanup_strip_text(json['category']).split(',')
+        self.cuisines = cleanup_strip_text(json['cuisine']).split(',')
         self.description = cleanup_strip_text(json['description'], False)
         self.prep_time = json['prep_time']
         self.total_time = json['total_time']
@@ -32,7 +32,7 @@ class Recipe():
 
     def __str__(self):
         return f"""
-        {self.name} - {self.category} - {self.cuisine}
+        {self.name} - {",".join(self.categories)} - {",".join(self.cuisines)}
     
         Description: {self.description}
         Prep time: {self.prep_time} mins.
@@ -44,8 +44,8 @@ class Recipe():
             "id": self.id,
             "name": self.name,
             "image_url": self.image,
-            "category": self.category,
-            "cuisine": self.cuisine,
+            "categories": self.categories,
+            "cuisines": self.cuisines,
             "description": self.description,
             "prep_time": self.prep_time,
             "total_time": self.total_time,
@@ -59,8 +59,7 @@ class Ingredient():
     def __init__(self, name):
         _ingredient = parse_ingredient(name)
 
-        self.id = str(uuid4())
-        self.name = cleanup_strip_text(_ingredient.name[0].text, False)
+        self.name = cleanup_strip_text(_ingredient.name[0].text, False).lower()
         self.amount = None
         self.method = None
 
@@ -87,7 +86,6 @@ class Ingredient():
 
     def to_dict(self):
         return {
-            "id": self.id,
             "name": self.name,
             "amount": self.amount,
             "method": self.method,

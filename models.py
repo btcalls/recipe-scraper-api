@@ -45,8 +45,10 @@ class Recipe():
         return {
             "id": self.id,
             "name": self.name,
-            "author": self.author,
-            "site_name": self.site_name,
+            "author": {
+                "name": self.author,
+                "website": self.site_name,
+            },
             "image_url": self.image,
             "categories": self.categories,
             "cuisines": self.cuisines,
